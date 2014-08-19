@@ -17,24 +17,30 @@ peg_locations = {1: (0.0127, 0.0499),
 				 }
 
 class Plotter:
-	def plot_pegs(self):
-		fig = plt.gcf()
+	def __init__(self):
+		self.fig = plt.figure(figsize=(10,7)) # figure object
+		plt.axis([0.0, 0.1, 0.0, 0.07]) # set the axis
+
+	def plot_pegs(self):		
+		fig = self.fig
+		fig.gca().set_autoscale_on(False)
 		for key in peg_locations:
 			x,y = peg_locations[key]
 			circle = plt.Circle((x,y), 0.003, color='b')
 			fig.gca().add_artist(circle)
-		fig.gca().autoscale()
+
 		
 
 	def plot_lines(self, lines):
-		lc = mpl.collections.LineCollection(lines, linewidths=2)
+		lc = mpl.collections.LineCollection(edges, linewidths=2)
 		fig = plt.gcf()
 		fig.gca().add_collection(lc)
 		fig.savefig('test.png')
 
 
 
+
 if __name__ == '__main__':
 	a = Plotter()
 	a.plot_pegs()
-	a.plot_lines([((0,1), (1,1))])
+	a.plot_lines([((0.0127,0.0499), (0.0121,0.0321))])
