@@ -4,10 +4,10 @@ import IPython
 from state_space import StateSpace
 
 peg_locations = {1: (0.0127, 0.0499),
-				 2: (0.013, 0.0321),
+				 2: (0.015, 0.0321),
 				 3: (0.0124, 0.0146),
 				 4: (0.0419, 0.0500),
-				 5: (0.0417, 0.0319),
+				 5: (0.0397, 0.0319),
 				 6: (0.0407, 0.0136),
 				 7: (0.0596, 0.0420),
 				 8: (0.0594, 0.0201),
@@ -24,13 +24,18 @@ class Plotter:
 
 	def plot_pegs(self):		
 		fig = self.fig
-		fig.gca().set_autoscale_on(False)
+		fig.gca().set_autoscale_on(True)
 		for key in peg_locations:
 			x,y = peg_locations[key]
 			circle = plt.Circle((x,y), 0.0015, color='b')
 			fig.gca().add_artist(circle)
 
-		
+	def plot_labels(self):
+		fig = self.fig
+		for peg in peg_locations.keys():
+			coord = peg_locations[peg]
+			fig.gca().text(coord[0], coord[1] + 0.002, str(peg), color='r')
+
 	def plot_lines(self, lines):
 		edges = []
 		for line in lines:
@@ -42,18 +47,10 @@ class Plotter:
 		fig.gca().add_collection(lc)
 		fig.savefig('test2.png')
 
-	def get_coord_edges(self, edges):
-		
-		coord = ()
-		for edge in edges:
-			line = (start, end)
-			IPython.embed()
-			coord += (line,)
-		return coord
-
 if __name__ == '__main__':
     defaultStateSpace = StateSpace([[1, True, 0], [3, True, 0], [6, True, 0], 
         [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]], [2], [9, 10, 11, 12])
     a = Plotter()
     a.plot_pegs()
+    a.plot_labels()
     a.plot_lines(defaultStateSpace.getInOrderEdges())

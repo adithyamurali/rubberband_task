@@ -35,12 +35,12 @@ class StateSpace:
         edges.append(lastEdge)
         return edges
 
-# def main():
-#     defaultStateSpace = StateSpace()
-#     defaultStateSpace.inOrder = [[1, True, 0], [3, True, 0], [6, True, 0], 
-#         [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]]
-#     defaultStateSpace.inside = [2]
-#     defaultStateSpace.outside = [9, 10, 11, 12]
-#     print defaultStateSpace.getInOrderEdges()
-# if __name__ == '__main__':
-#     main()
+def main():
+    defaultStateSpace = StateSpace()
+    defaultStateSpace.inOrder = [[1, True, 0], [3, True, 0], [6, True, 0], 
+        [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]]
+    defaultStateSpace.inside = [2]
+    defaultStateSpace.outside = [9, 10, 11, 12]
+    print defaultStateSpace.getInOrderEdges()
+if __name__ == '__main__':
+    main()
