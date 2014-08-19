@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
-
+import matplotlib as mpl
+import IPython
+from state_space import StateSpace
 peg_locations = {1: (0.0127, 0.0499),
 				 2: (0.0121, 0.0321),
 				 3: (0.0124, 0.0146),
@@ -23,5 +25,29 @@ class Plotter:
 			fig.gca().add_artist(circle)
 		fig.savefig('test.png')
 
+	def plot_lines(self, lines):
+		edges = []
+		for line in lines:
+			start = peg_locations[line[0]]
+			end = peg_locations[line[1]]
+			edges.append((start, end))
+		lc = mpl.collections.LineCollection(edges, linewidths = 2, color="g")
+		fig = plt.gcf()
+		fig.gca().add_collection(lc)
+		fig.savefig('test2.png')
+
+	def get_coord_edges(self, edges):
+		
+		coord = ()
+		for edge in edges:
+			line = (start, end)
+			IPython.embed()
+			coord += (line,)
+		return coord
+
 if __name__ == '__main__':
-	Plotter().plot_pegs()
+    defaultStateSpace = StateSpace([[1, True, 0], [3, True, 0], [6, True, 0], 
+        [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]], [2], [9, 10, 11, 12])
+    a = Plotter()
+    a.plot_pegs()
+    a.plot_lines(defaultStateSpace.getInOrderEdges())
