@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+import IPython
 
 peg_locations = {1: (0.0127, 0.0499),
 				 2: (0.0121, 0.0321),
@@ -21,7 +23,18 @@ class Plotter:
 			x,y = peg_locations[key]
 			circle = plt.Circle((x,y), 0.003, color='b')
 			fig.gca().add_artist(circle)
+		fig.gca().autoscale()
+		
+
+	def plot_lines(self, lines):
+		lc = mpl.collections.LineCollection(lines, linewidths=2)
+		fig = plt.gcf()
+		fig.gca().add_collection(lc)
 		fig.savefig('test.png')
 
+
+
 if __name__ == '__main__':
-	Plotter().plot_pegs()
+	a = Plotter()
+	a.plot_pegs()
+	a.plot_lines([((0,1), (1,1))])
