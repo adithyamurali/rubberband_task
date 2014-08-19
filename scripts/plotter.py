@@ -22,14 +22,21 @@ class Plotter:
 		self.fig = plt.figure(figsize=(10,7)) # figure object
 		plt.axis([0.0, 0.1, 0.0, 0.07]) # set the axis
 
-	def plot_pegs(self):		
+	def plot(self, state_space):
+		self.plot_pegs(state_space)
+		self.plot_lines(state_space.getInOrderEdges())
+
+	def plot_pegs(self, state_space):		
 		fig = self.fig
-		fig.gca().set_autoscale_on(False)
+		# fig.gca().set_autoscale_on(False)
+		rubberband_pegs = [a[0] for a in state_space.inOrder]
 		for key in peg_locations:
 			x,y = peg_locations[key]
-			circle = plt.Circle((x,y), 0.0015, color='b')
+			if key in rubberband_pegs:
+				circle = plt.Circle((x,y), 0.0015, color='b')
+			else:
+				circle = plt.Circle((x,y), 0.0015, color='r')
 			fig.gca().add_artist(circle)
-
 		
 	def plot_lines(self, lines):
 		edges = []
@@ -43,7 +50,6 @@ class Plotter:
 		fig.savefig('test2.png')
 
 	def get_coord_edges(self, edges):
-		
 		coord = ()
 		for edge in edges:
 			line = (start, end)
@@ -55,5 +61,4 @@ if __name__ == '__main__':
     defaultStateSpace = StateSpace([[1, True, 0], [3, True, 0], [6, True, 0], 
         [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]], [2], [9, 10, 11, 12])
     a = Plotter()
-    a.plot_pegs()
-    a.plot_lines(defaultStateSpace.getInOrderEdges())
+    a.plot(defaultStateSpace)
