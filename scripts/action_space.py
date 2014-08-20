@@ -6,7 +6,7 @@
 import roslib
 import time
 import rospy
-from state_space import StateSpace, Peg, Contour, make_pegs
+from state_space import StateSpace, Peg, Contour, make_pegs, make_state_space
 import cv2
 from plotter import peg_locations, peg_coord
 import numpy as np
@@ -69,19 +69,11 @@ class ActionSpace:
                     hull_pegs.append(peg_num)
         return hull_pegs
 
-def make_state_space():
-    pegs = make_pegs([[1, True, 0], [3, True, 0], [6, True, 0], 
-        [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]])
-    default_state_space = StateSpace(pegs, [2], [9, 10, 11, 12])
-
 def main():
-    pegs = make_pegs([[1, True, 0], [3, True, 0], [6, True, 0], 
-        [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]])
-    default_state_space = StateSpace(pegs, [2], [9, 10, 11, 12])
-    # a = Plotter('test3.png')
-    # a.plot(default_state_space)
+    examples = make_state_space()
+    default_state_space = examples[2]
     action_space = ActionSpace(default_state_space)
-    print action_space.convex_hull(peg=7)
+    print action_space.convex_hull(peg=12)
 
 
 if __name__ == '__main__':

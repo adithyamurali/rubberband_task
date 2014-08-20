@@ -87,7 +87,7 @@ def make_state_space():
     state_space_1 = StateSpace(pegs1, [2], [9, 10, 11, 12])
     examples[1] = state_space_1
     pegs2 = make_pegs([[2, True, 0], [3, True, 0], [6, True, 0], [12, True, 0], [5, True, 0]])
-    state_space_2 = StateSpace(pegs2, [8], [1, 4, 7, 9, 10, 11, 12])
+    state_space_2 = StateSpace(pegs2, [8], [1, 4, 7, 9, 10, 11])
     examples[2] = state_space_2
     return examples
 
