@@ -1,7 +1,12 @@
+#!/usr/bin/env python
+
+# Authors: Adithya Murali and Siddarth Sen
+# UC Berkeley, 2014
+
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import IPython
-from state_space import StateSpace
+from state_space import StateSpace, Peg, Contour
 
 peg_locations = {1: (0.0127, 0.0499),
 				 2: (0.015, 0.0321),
@@ -17,17 +22,40 @@ peg_locations = {1: (0.0127, 0.0499),
 				 12: (0.0934, 0.0191),
 				 }
 
+peg_coord = {(0.0127, 0.0499) : 1,
+			(0.015, 0.0321): 2,
+			(0.0124, 0.0146) : 3,
+			(0.0419, 0.0500) : 4,
+			(0.0397, 0.0319) : 5,
+			(0.0407, 0.0136) : 6,
+			(0.0596, 0.0420) : 7,
+			(0.0594, 0.0201) : 8, 
+			(0.0768, 0.0566) : 9,
+			(0.0765, 0.0054) : 10,
+			(0.0932, 0.0414) : 11,
+			(0.0934, 0.0191) : 12,
+			 }
+
 class Plotter:
-	def __init__(self):
+	def __init__(self, file_name):
 		self.fig = plt.figure(figsize=(10,7)) # figure object
 		plt.axis([0.0, 0.1, 0.0, 0.07]) # set the axis
+		self.file_name = file_name
+	def plot(self, state_space):
+		self.plot_pegs(state_space)
+		self.plot_lines(state_space.get_in_order_edges())
+		self.plot_labels()
+		self.fig.savefig(self.file_name)
 
-	def plot_pegs(self):		
+	def plot_pegs(self, state_space):		
 		fig = self.fig
-		fig.gca().set_autoscale_on(True)
+		rubberband_pegs = state_space.contour.peg_order
 		for key in peg_locations:
 			x,y = peg_locations[key]
-			circle = plt.Circle((x,y), 0.0015, color='b')
+			if key in rubberband_pegs:
+				circle = plt.Circle((x,y), 0.0015, color='b')
+			else:
+				circle = plt.Circle((x,y), 0.0015, color='r')
 			fig.gca().add_artist(circle)
 
 	def plot_labels(self):
@@ -45,12 +73,17 @@ class Plotter:
 		lc = mpl.collections.LineCollection(edges, linewidths = 2, color="g")
 		fig = plt.gcf()
 		fig.gca().add_collection(lc)
-		fig.savefig('test2.png')
+
+def make_pegs(pegs):
+    result = []
+    for elem in pegs:
+        result.append(Peg(elem[0], elem[1], elem[2]))
+    return result
 
 if __name__ == '__main__':
-    defaultStateSpace = StateSpace([[1, True, 0], [3, True, 0], [6, True, 0], 
-        [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]], [2], [9, 10, 11, 12])
-    a = Plotter()
-    a.plot_pegs()
-    a.plot_labels()
-    a.plot_lines(defaultStateSpace.getInOrderEdges())
+    pegs = make_pegs([[1, True, 0], [3, True, 0], [6, True, 0], 
+        [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]])
+    default_state_space = StateSpace(pegs, [2], [9, 10, 11, 12])
+    a = Plotter('test2.png')
+    a.plot(default_state_space)
+
