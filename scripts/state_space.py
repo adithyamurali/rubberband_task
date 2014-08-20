@@ -8,7 +8,7 @@ import time
 import rospy
 import IPython
 
-class StateSpace:
+class State:
     def __init__(self, pegs = None, inside = None, outside = None):
         self.contour = Contour(pegs)
         self.inside = inside
@@ -84,10 +84,10 @@ def make_state_space():
     examples = {}
     pegs1 = make_pegs([[1, True, 0], [3, True, 0], [6, True, 0], 
         [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]])
-    state_space_1 = StateSpace(pegs1, [2], [9, 10, 11, 12])
+    state_space_1 = State(pegs1, [2], [9, 10, 11, 12])
     examples[1] = state_space_1
     pegs2 = make_pegs([[2, True, 0], [3, True, 0], [6, True, 0], [12, True, 0], [5, True, 0]])
-    state_space_2 = StateSpace(pegs2, [8], [1, 4, 7, 9, 10, 11])
+    state_space_2 = State(pegs2, [8], [1, 4, 7, 9, 10, 11])
     examples[2] = state_space_2
     return examples
 

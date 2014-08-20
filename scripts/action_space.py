@@ -6,7 +6,7 @@
 import roslib
 import time
 import rospy
-from state_space import StateSpace, Peg, Contour, make_pegs, make_state_space
+from state_space import State, Peg, Contour, make_pegs, make_state_space
 import cv2
 from plotter import peg_locations, peg_coord
 import numpy as np
