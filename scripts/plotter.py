@@ -6,7 +6,7 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import IPython
-from state_space import StateSpace, Peg, Contour
+from state_space import StateSpace, Peg, Contour, make_pegs, make_state_space
 
 peg_locations = {1: (0.0127, 0.0499),
 				 2: (0.015, 0.0321),
@@ -81,9 +81,8 @@ def make_pegs(pegs):
     return result
 
 if __name__ == '__main__':
-    pegs = make_pegs([[1, True, 0], [3, True, 0], [6, True, 0], 
-        [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]])
-    default_state_space = StateSpace(pegs, [2], [9, 10, 11, 12])
-    a = Plotter('test2.png')
+    examples = make_state_space()
+    default_state_space = examples[2]
+    a = Plotter('example2_ss.png')
     a.plot(default_state_space)
 

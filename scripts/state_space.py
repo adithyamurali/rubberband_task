@@ -80,10 +80,20 @@ def make_pegs(pegs):
         result.append(Peg(elem[0], elem[1], elem[2]))
     return result
 
-def main():
-    pegs = make_pegs([[1, True, 0], [3, True, 0], [6, True, 0], 
+def make_state_space():
+    examples = {}
+    pegs1 = make_pegs([[1, True, 0], [3, True, 0], [6, True, 0], 
         [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]])
-    a = StateSpace(pegs, [2], [9, 10, 11, 12])
+    state_space_1 = StateSpace(pegs1, [2], [9, 10, 11, 12])
+    examples[1] = state_space_1
+    pegs2 = make_pegs([[2, True, 0], [3, True, 0], [6, True, 0], [12, True, 0], [5, True, 0]])
+    state_space_2 = StateSpace(pegs2, [8], [1, 4, 7, 9, 10, 11, 12])
+    examples[2] = state_space_2
+    return examples
+
+def main():
+    examples = make_state_space()
+    a = examples[1]
     print a.get_in_order_edges()
     print a.contour.peg_order
     print a.get_right_inside_peg(4)
