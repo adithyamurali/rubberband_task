@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import IPython
 from state_space import StateSpace, Peg, Contour
+import numpy as np
 
 peg_locations = {1: (0.0127, 0.0499),
 				 2: (0.015, 0.0321),
@@ -53,9 +54,9 @@ class Plotter:
 		for key in peg_locations:
 			x,y = peg_locations[key]
 			if key in rubberband_pegs:
-				circle = plt.Circle((x,y), 0.0015, color='b')
+				circle = plt.Circle((x,y), 0.001, color='b')
 			else:
-				circle = plt.Circle((x,y), 0.0015, color='r')
+				circle = plt.Circle((x,y), 0.001, color='r')
 			fig.gca().add_artist(circle)
 
 	def plot_labels(self):
@@ -70,6 +71,25 @@ class Plotter:
 			start = peg_locations[line[0]]
 			end = peg_locations[line[1]]
 			edges.append((start, end))
+
+		true_points = []	
+		for i in range(len(edges)):
+			p1 = edges[i-1][0]
+			p2 = edges[i][0]
+			p3 = edges[i][1]
+			v1 = [p2[0]-p1[0], p2[1]-p1[1]]
+			v2 = [p2[0]-p3[0], p2[1]-p3[1]]
+
+			v = [v1[0]+v2[0], v1[1]+v2[1]] # form the vector
+			v_mag = np.sqrt((np.power(v[0],2) + np.power(v[1], 2))) # get its magnitude
+			v = [v[0]/v_mag, v[1]/v_mag] # normalize it
+
+			pt = (p2[0]+0.003*v[0], p2[1]+0.003*v[1])
+			true_points.append(pt)
+
+		edges = []
+		for i in range(len(true_points)):
+			edges.append((true_points[i-1], true_points[i]))
 		lc = mpl.collections.LineCollection(edges, linewidths = 2, color="g")
 		fig = plt.gcf()
 		fig.gca().add_collection(lc)
