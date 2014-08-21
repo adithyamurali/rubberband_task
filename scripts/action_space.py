@@ -31,10 +31,10 @@ class ActionSpace:
     def __init__(self, default_state_space = None):
         self.default_state_space = default_state_space
 
-    # #Todo
-    # def execute(self, action, start_state, peg):
 
-    # def add_peg(self, start_state, peg):
+
+    def remove(self, start_state = None, peg = None):
+        
 
     def remove_convex(self, start_state = None, peg = None):
         left_peg = start_state.get_left_inside_peg(peg)
@@ -88,6 +88,9 @@ class ActionSpace:
         for point in hull:
             hull_pegs.append(peg_coord[round_point(point[0])])
         return hull_pegs
+
+    def isValid(end_state, peg_added, peg_removed):
+        pass
 
 def main():
     # num = 2
