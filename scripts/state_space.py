@@ -7,6 +7,50 @@ import roslib
 import time
 import rospy
 import IPython
+import numpy as np
+import cv2
+
+peg_locations = {1: (0.0127, 0.0499),
+                 2: (0.015, 0.0321),
+                 3: (0.0124, 0.0146),
+                 4: (0.0419, 0.0500),
+                 5: (0.0397, 0.0319),
+                 6: (0.0407, 0.0136),
+                 7: (0.0596, 0.0420),
+                 8: (0.0594, 0.0201),
+                 9: (0.0768, 0.0566),
+                 10: (0.0765, 0.0054),
+                 11: (0.0932, 0.0414),
+                 12: (0.0934, 0.0191),
+                 }
+neighbors_graph = {1: (2, 4, 5),
+                 2: (1, 3, 4, 5, 6),
+                 3: (2, 5, 6),
+                 4: (1, 2, 5, 7),
+                 5: (1, 2, 3, 4, 6, 7, 8),
+                 6: (2, 3, 5, 8),
+                 7: (4, 5, 8, 9, 11, 12),
+                 8: (5, 6, 7, 10, 11, 12),
+                 9: (7, 11),
+                 10: (8, 12),
+                 11: (7, 8, 9, 12),
+                 12: (7, 8, 10, 11),
+                }
+
+peg_coord = {(0.0127, 0.0499) : 1,
+            (0.015, 0.0321): 2,
+            (0.0124, 0.0146) : 3,
+            (0.0419, 0.0500) : 4,
+            (0.0397, 0.0319) : 5,
+            (0.0407, 0.0136) : 6,
+            (0.0596, 0.0420) : 7,
+            (0.0594, 0.0201) : 8, 
+            (0.0768, 0.0566) : 9,
+            (0.0765, 0.0054) : 10,
+            (0.0932, 0.0414) : 11,
+            (0.0934, 0.0191) : 12,
+             }
+
 
 class State:
     def __init__(self, pegs = None, inside = None, outside = None):
@@ -22,6 +66,84 @@ class State:
 
     def get_right_inside_peg(self, peg_num):
         return self.contour.get_right_inside_peg(peg_num)
+
+    def get_add_actions(self):
+        edges = self.get_in_order_edges()
+        add_actions = []
+        possible_pegs_to_add = self.inside + self.outside
+        for edge in edges:
+            for peg in possible_pegs_to_add:
+                # form a contour with the 3 points
+                pt1 = peg_locations[edge[0]]
+                pt2 = peg_locations[edge[1]]
+                pt3 = peg_locations[peg]
+
+                contour = self.get_contour([pt1,pt2,pt3])
+                pegs_inside_contour = self.get_pegs_inside_contour(contour)
+                if len(pegs_inside_contour) == 0: # no pegs inside contour so no additional interactions
+                    action = AddAction(edge, peg)
+                    add_actions.append(action)
+        return add_actions
+
+    def get_convex_add_actions(self):
+        """ simply return a list outside pegs that can be added to a convex shape """
+        return self.outside
+
+    def get_convex_next_state(self, action):
+        """ returns the next state where action is just a peg number to add the convex shape"""
+        contour_pegs = self.contour.peg_order
+        pts = contour_pegs[:] + [action]
+        print pts
+        coordinates = [peg_locations[a] for a in pts]
+        contour = self.get_contour(coordinates, convex=True)
+        peg_list = []
+        for pt in contour:
+            pt = round_point(pt)
+            peg = peg_coord[pt]
+            peg_list.append([peg, True, 0])
+        pegs_inside_contour = self.get_pegs_inside_contour(contour)
+        inside = []
+        outside = []
+        for key in peg_locations:
+            if key in peg_list:
+                continue
+            if key in pegs_inside_contour:
+                inside.append(key)
+                continue
+            outside.append(key)
+        return State(make_pegs(peg_list), inside, outside)
+        # return peg_list;
+
+
+    def get_contour(self, points, convex=False):
+        """ returns an cv2 contour given a list of tuples as points """
+        # IPython.embed()
+        contour = np.array([[a[0], a[1]] for a in points], dtype=np.float32) # convert it to a list of lists
+        if convex:
+            contour = cv2.convexHull(contour)
+            contour = np.array([ a[0] for a in contour], dtype=np.float32)
+        return contour
+
+    def get_pegs_inside_contour(self, contour):
+        """ returns a list of pegs by number that are inside a given contour """
+        pegs_inside_contour = []
+        for key in peg_locations:
+            pt = peg_locations[key]
+            # print cv2.pointPolygonTest(contour, pt, True)
+            if cv2.pointPolygonTest(contour, pt, True) > 0:
+                pegs_inside_contour.append(key)
+        return pegs_inside_contour
+
+
+
+class AddAction:
+    def __init__(self, edge, peg):
+        self.edge = edge # edge to grasp ex: (1,2)
+        self.peg = peg # peg to grasp ex: 5
+
+    def __repr__(self):
+        return "<Add: [edge:(%d,%d), peg:%d]>"%(self.edge[0], self.edge[1], self.peg)
+
 
 class Contour:
     def __init__(self, pegs):
@@ -89,13 +211,19 @@ def make_state_space():
     pegs2 = make_pegs([[2, True, 0], [3, True, 0], [6, True, 0], [12, True, 0], [5, True, 0]])
     state_space_2 = State(pegs2, [8], [1, 4, 7, 9, 10, 11])
     examples[2] = state_space_2
+    pegs3 = make_pegs([[1, True, 0], [4, True, 0], [8, True, 0], [6, True, 0], [3, True, 0]])
+    state_space_3 = State(pegs3, [5], [7,9,10,11,12])
+    examples[3] = state_space_3
     return examples
+
+def round_point(point):
+    return (round(point[0], 4), round(point[1], 4))
 
 def main():
     examples = make_state_space()
-    a = examples[1]
-    print a.get_in_order_edges()
-    print a.contour.peg_order
-    print a.get_right_inside_peg(4)
+    a = examples[3]
+    next_state = a.get_convex_next_state(10)
+    # print a.get_add_actions()
+
 if __name__ == '__main__':
     main()
