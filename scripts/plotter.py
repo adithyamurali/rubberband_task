@@ -6,11 +6,11 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import IPython
-from state_space import StateSpace, Peg, Contour, make_pegs, make_state_space
+from state_space import State, Peg, Contour, make_pegs, make_state_space
 import numpy as np
 
 peg_locations = {1: (0.0127, 0.0499),
-				 2: (0.015, 0.0321),
+				 2: (0.0150, 0.0321),
 				 3: (0.0124, 0.0146),
 				 4: (0.0419, 0.0500),
 				 5: (0.0397, 0.0319),
@@ -24,12 +24,12 @@ peg_locations = {1: (0.0127, 0.0499),
 				 }
 
 peg_coord = {(0.0127, 0.0499) : 1,
-			(0.015, 0.0321): 2,
+			(0.0150, 0.0321): 2,
 			(0.0124, 0.0146) : 3,
 			(0.0419, 0.0500) : 4,
 			(0.0397, 0.0319) : 5,
 			(0.0407, 0.0136) : 6,
-			(0.0596, 0.0420) : 7,
+			(0.0596                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        , 0.0420) : 7,
 			(0.0594, 0.0201) : 8, 
 			(0.0768, 0.0566) : 9,
 			(0.0765, 0.0054) : 10,
@@ -101,8 +101,9 @@ def make_pegs(pegs):
     return result
 
 if __name__ == '__main__':
+    num = 5
     examples = make_state_space()
-    default_state_space = examples[1]
-    a = Plotter('example1_ss.png')
+    default_state_space = examples[num]
+    a = Plotter('example_' + str(num) + '.png')
     a.plot(default_state_space)
 

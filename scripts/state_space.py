@@ -8,7 +8,7 @@ import time
 import rospy
 import IPython
 
-class StateSpace:
+class State:
     def __init__(self, pegs = None, inside = None, outside = None):
         self.contour = Contour(pegs)
         self.inside = inside
@@ -84,12 +84,27 @@ def make_state_space():
     examples = {}
     pegs1 = make_pegs([[1, True, 0], [3, True, 0], [6, True, 0], 
         [8, True, 0], [7, True, 0], [5, False, 0], [4, True, 0]])
-    state_space_1 = StateSpace(pegs1, [2], [9, 10, 11, 12])
+    state_space_1 = State(pegs1, [2], [9, 10, 11, 12])
     examples[1] = state_space_1
+
     pegs2 = make_pegs([[2, True, 0], [3, True, 0], [6, True, 0], [12, True, 0], [5, True, 0]])
-    state_space_2 = StateSpace(pegs2, [8], [1, 4, 7, 9, 10, 11])
+    state_space_2 = State(pegs2, [8], [1, 4, 7, 9, 10, 11])
     examples[2] = state_space_2
+
+    pegs4 = make_pegs([[1, True, 0], [3, True, 0], [10, True, 0], [9, True, 0]])
+    state_space_4 = State(pegs4, [2,4,5,6,7,8], [11, 12])
+    examples[4] = state_space_4
+
+    pegs5 = make_pegs([[1, True, 0], [3, True, 0], [6, True, 0], [5, False, 0], [7, False, 0],
+     [11, True, 0], [4, True, 0]])
+    state_space_5 = State(pegs5, [2], [8, 9, 10, 12])
+    examples[5] = state_space_5
+
     return examples
+
+def round_point(point):
+    point = (round(point[0], 4), round(point[1], 4))
+    return point
 
 def main():
     examples = make_state_space()
