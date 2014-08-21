@@ -66,6 +66,12 @@ class State:
     def get_right_inside_peg(self, peg_num):
         return self.contour.get_right_inside_peg(peg_num)
 
+    def get_left_peg(self, peg_num):
+        return self.contour.get_left_peg(peg_num)
+
+    def get_right_peg(self, peg_num):
+        return self.contour.get_right_peg(peg_num)
+
     def get_add_actions(self):
         edges = self.get_in_order_edges()
         add_actions = []
@@ -111,7 +117,6 @@ class State:
                 continue
             outside.append(key)
         return State(make_pegs(peg_list), inside, outside)
-        # return peg_list;
 
 
     def get_contour(self, points, convex=False):
@@ -176,6 +181,20 @@ class Contour:
                 return left_peg
             i += 1
         return None
+
+    def get_left_peg(self, peg_num):
+        i = self.peg_order.index(peg_num)
+        i -= 1
+        if i == -1:
+            return len(self.peg_order) - 1
+        return self.peg_order[i]
+
+    def get_right_peg(self, peg_num):
+        i = self.peg_order.index(peg_num)
+        i += 1
+        if i == len(self.peg_order):
+            i = 0
+        return self.peg_order[i]
 
     def get_in_order_edges(self):
         i = 0

@@ -11,6 +11,7 @@ import cv2
 from plotter import peg_locations, peg_coord, Plotter
 import numpy as np
 import IPython
+import math
 from numpy import vstack
 
 neighbors_graph = {1: (2, 4, 5),
@@ -31,14 +32,15 @@ class ActionSpace:
     def __init__(self, default_state_space = None):
         self.default_state_space = default_state_space
 
-
-
     def remove(self, start_state = None, peg = None):
-        
+        return
+
+    def isValid(state, peg_added, peg_removed):
+        return False
 
     def remove_convex(self, start_state = None, peg = None):
-        left_peg = start_state.get_left_inside_peg(peg)
-        right_peg = start_state.get_right_inside_peg(peg)
+        left_peg = start_state.get_left_peg(peg)
+        right_peg = start_state.get_right_peg(peg)
         new_contour_pegs = self.convex_hull(start_state, peg, left_peg, right_peg)
 
         pegs_to_be_added = []
@@ -46,10 +48,9 @@ class ActionSpace:
             if (elem != left_peg) and (elem != right_peg):
                 pegs_to_be_added.append(elem)
 
-        prev_outside = start_state.outside
         prev_inside = start_state.inside
         prev_contour = start_state.contour
-        new_outside = prev_outside[:]
+        new_outside = start_state.outside[:]
         new_outside.append(peg)
         new_inside = []
         for elem in prev_inside:
@@ -64,6 +65,7 @@ class ActionSpace:
                     list_of_new_pegs.append(Peg(new_peg, True, 0))
         end_state = State(list_of_new_pegs, new_inside, new_outside)
         assert len(new_inside + new_outside + end_state.contour.peg_order) == 12
+        IPython.embed()
         return end_state
 
     def convex_hull(self, start_state = None, peg = None, left_peg = None, right_peg = None):
@@ -89,24 +91,19 @@ class ActionSpace:
             hull_pegs.append(peg_coord[round_point(point[0])])
         return hull_pegs
 
-    def isValid(end_state, peg_added, peg_removed):
-        pass
-
 def main():
-    # num = 2
-    # examples = make_state_space()
-    # default_state_space = examples[num]
-    # action_space = ActionSpace(default_state_space)
-    # result = action_space.remove_convex(default_state_space,12)
-    num = 4
-    remove_peg = 9
+    config = "end"
+    num = 5
+    remove_peg = 11
     examples = make_state_space()
     default_state_space = examples[num]
-    a = Plotter('remove_peg'+str(remove_peg)+'_start_state_' + str(num) + '.png')
+    a = Plotter('fig/remove_peg'+str(remove_peg)+'_'+config+'_state_' + str(num) + '.png')
     action_space = ActionSpace(default_state_space)
     end_state = action_space.remove_convex(default_state_space,remove_peg)
-    a.plot(default_state_space)
-
+    if config == "end":
+        a.plot(end_state)
+    else:
+        a.plot(default_start_state)
 
 if __name__ == '__main__':
     main()
